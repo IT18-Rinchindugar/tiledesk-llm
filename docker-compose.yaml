@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  tilellm-redis:
+    image: redis:latest
+    container_name: tilellm-redis
+    networks:
+      - mynetwork
+    ports:
+      - "6379:6379"
+
+  tilellm:
+    build:
+      context: .
+    container_name: tilellm
+    environment:
+      - environment=${ENV}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - PINECONE_TEXT_KEY=${PINECONE_TEXT_KEY}
+      - PINECONE_INDEX=${PINECONE_INDEX}
+      - REDIS_URL=redis://tilellm-redis:6379/0
+    networks:
+      - mynetwork
+    ports:
+      - "8000:8000"
+    depends_on:
+      - tilellm-redis
+
+networks:
+  mynetwork:
+    driver: bridge

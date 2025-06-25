@@ -19,6 +19,8 @@ services:
       - PINECONE_TEXT_KEY=${PINECONE_TEXT_KEY}
       - PINECONE_INDEX=${PINECONE_INDEX}
       - REDIS_URL=redis://tilellm-redis:6379/0
+    volumes:
+      - ./tilellm:/tiledesk-llm/tilellm
     networks:
       - mynetwork
     ports:

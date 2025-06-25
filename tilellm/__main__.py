@@ -95,7 +95,8 @@ async def reader(channel: aioredis.client.Redis):
                     byte_str = message_values[b"single"]
                     dict_str = byte_str.decode("UTF-8")
                     logger.info(dict_str)
-                    item = ast.literal_eval(dict_str)
+                    # item = ast.literal_eval(dict_str)
+                    item = json.loads(dict_str) 
                     item_single = ItemSingle(**item)
                     scrape_status_response = ScrapeStatusResponse(status_message="Indexing started",
                                                                   status_code=2

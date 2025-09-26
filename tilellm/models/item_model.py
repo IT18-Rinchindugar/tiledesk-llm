@@ -9,7 +9,7 @@ class ItemSingle(BaseModel):
     type: str | None = None
     content: str | None =None
     gptkey: str | None = None
-    embedding: str = Field(default_factory=lambda: "text-embedding-ada-002")
+    embedding: str = Field(default_factory=lambda: "text-embedding-3-large")
     namespace: str | None =None
     webhook: str = Field(default_factory=lambda: "")
 
@@ -18,7 +18,7 @@ class MetadataItem(BaseModel):
     id: str
     source: str | None = None
     type: str | None = None
-    embedding: str = Field(default_factory=lambda: "text-embedding-ada-002")
+    embedding: str = Field(default_factory=lambda: "text-embedding-3-large")
 
 
 class ChatEntry(BaseModel):
@@ -47,12 +47,12 @@ class ChatHistory(BaseModel):
 class QuestionAnswer(BaseModel):
     question: str
     namespace: str
-    gptkey: str
+    gptkey: str =Field(default="")
     model: str =Field(default="gpt-3.5-turbo") 
     temperature: float = Field(default=0.0)
     top_k: int = Field(default=5)
     max_tokens: int = Field(default=128)
-    embedding: str = Field(default_factory=lambda: "text-embedding-ada-002")
+    embedding: str = Field(default_factory=lambda: "text-embedding-3-large")
     system_context: Optional[str] = None
     chat_history_dict : Optional[Dict[str, ChatEntry]] = None
 

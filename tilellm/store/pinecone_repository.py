@@ -38,7 +38,7 @@ async def add_pc_item(item):
 
     emb_dimension = get_embeddings_dimension(embedding)
 
-    # default text-embedding-ada-002 1536, text-embedding-3-large 3072, text-embedding-3-small 1536
+    # default text-embedding-3-large 3072, text-embedding-3-large 3072, text-embedding-3-small 3072
     oai_embeddings = OpenAIEmbeddings(api_key=gpt_key, model=embedding)
     vector_store = await create_pc_index(embeddings=oai_embeddings, emb_dimension=emb_dimension)
 
@@ -150,7 +150,7 @@ async def delete_pc_ids_namespace(metadata_id: str, namespace: str):
 
         logger.debug(total_vectors)
         pc_res = index.query(
-            vector=[0] * 1536,  # [0,0,0,0......0]
+            vector=[0] * 3072,  # [0,0,0,0......0]
             top_k=total_vectors,
             filter={"id": {"$eq": metadata_id}},
             namespace=namespace,
@@ -203,7 +203,7 @@ async def get_pc_ids_namespace(metadata_id: str, namespace: str):
         logger.debug(f"pinecone total vector in {namespace}: {total_vectors}")
 
         pc_res = index.query(
-            vector=[0] * 1536,  # [0,0,0,0......0]
+            vector=[0] * 3072,  # [0,0,0,0......0]
             top_k=total_vectors,
             filter={"id": {"$eq": metadata_id}},
             namespace=namespace,
@@ -266,7 +266,7 @@ async def get_pc_all_obj_namespace(namespace: str):
         logger.debug(f"pinecone total vector in {namespace}: {total_vectors}")
 
         pc_res = index.query(
-            vector=[0] * 1536,  # [0,0,0,0......0]
+            vector=[0] * 3072,  # [0,0,0,0......0]
             top_k=total_vectors,
             # filter={"id": {"$eq": id}},
             namespace=namespace,
@@ -363,7 +363,7 @@ async def get_pc_sources_namespace(source: str, namespace: str):
 
         logger.debug(f"pinecone total vector in {namespace}: {total_vectors}")
         pc_res = index.query(
-            vector=[0] * 1536,  # [0,0,0,0......0]
+            vector=[0] * 3072,  # [0,0,0,0......0]
             top_k=total_vectors,
             filter={"source": {"$eq": source}},
             namespace=namespace,
@@ -469,7 +469,7 @@ def calc_embedding_cost(texts, embedding):
     :return:
     """
     import tiktoken
-    enc = tiktoken.encoding_for_model('text-embedding-ada-002')
+    enc = tiktoken.encoding_for_model('text-embedding-3-large')
     total_tokens = sum([len(enc.encode(page.page_content)) for page in texts])
     logger.info(f'Total numer of Token: {total_tokens}')
     cost = 0
@@ -479,12 +479,12 @@ def calc_embedding_cost(texts, embedding):
         elif embedding == "text-embedding-3-small":
             cost = total_tokens / 1e6 * 0.02
         else:
-            embedding = "text-embedding-ada-002"
-            cost = total_tokens / 1e6 * 0.10
+            embedding = "text-embedding-3-large"
+            cost = total_tokens / 1e6 * 0.13
 
     except IndexError:
-        embedding = "text-embedding-ada-002"
-        cost = total_tokens / 1e6 * 0.10
+        embedding = "text-embedding-3-large"
+        cost = total_tokens / 1e6 * 0.13
 
     logger.info(f'Embedding cost $: {cost:.6f}')
     return total_tokens, cost
@@ -496,18 +496,18 @@ def get_embeddings_dimension(embedding):
     :param embedding:
     :return:
     """
-    emb_dimension = 1536
+    emb_dimension = 3072
     try:
         if embedding == "text-embedding-3-large":
             emb_dimension = 3072
         elif embedding == "text-embedding-3-small":
-            emb_dimension = 1536
+            emb_dimension = 3072
         else:
-            embedding = "text-embedding-ada-002"
-            emb_dimension = 1536
+            embedding = "text-embedding-3-large"
+            emb_dimension = 3072
 
     except IndexError:
-        embedding = "text-embedding-ada-002"
-        emb_dimension = 1536
+        embedding = "text-embedding-3-large"
+        emb_dimension = 3072
 
     return emb_dimension
